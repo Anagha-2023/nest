@@ -1,0 +1,8 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "types": ["node"] // Ensure Node.js types are included
+  },
+  "include": ["src"],
+  "exclude": ["node_modules"]
+}
