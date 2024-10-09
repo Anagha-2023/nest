@@ -262,9 +262,9 @@ const adminSlice = createSlice({
       builder
       .addCase(logout.fulfilled, (state) => {
         state.admin = null;
+        state.token = null;
         state.userInfo = [];
         state.hostInfo = [];
-        state.token = null;
         localStorage.removeItem('token');
         localStorage.removeItem('role');
       })

@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction, createAsyncThunk } from '@reduxjs/toolkit';
 import axios, { AxiosError } from 'axios';
-import { log } from 'console';
+import { stat } from 'fs';
 
 interface Host {
   email: string;
@@ -8,6 +8,13 @@ interface Host {
   name: string;
   token: string;
 }
+
+interface HomestayState {
+  homestay: any;
+  status: 'idle' | 'loading' | 'succeeded' | 'failed';
+  error: string | null;
+}
+
 // Define the initial state and types
 interface HostState {
   hostInfo: any | null;
@@ -29,7 +36,7 @@ const initialState: HostState = {
   hostInfo: null,
   error: null,
   token: null,
-  loading: false,
+  loading: false, 
   registerLoading: false,
   registerError: null,
   loginLoading: false,
@@ -211,6 +218,8 @@ const hostSlice = createSlice({
       })
       .addCase(hostLogin.fulfilled, (state, action: PayloadAction<any>) => {
         state.hostInfo = action.payload;
+        state.token = action.payload.token;
+        localStorage.setItem('token', action.payload.token);
         console.log("Host logged in:", state.hostInfo); // Add this
         state.loginLoading = false;
       })

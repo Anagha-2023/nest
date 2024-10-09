@@ -1,6 +1,8 @@
 // src/components/AdminDashboard.tsx
 import React, { useState, useEffect } from "react";
 import Spinner from "../Spinner";
+import AddHomestayForm from "../../pages/AddHomestay";
+import YourHomestays from "../../pages/YourHomestays";
 
 const HostHome: React.FC = () => {
   const [activeSection, setActiveSection] = useState("dashboard");
@@ -20,9 +22,9 @@ const HostHome: React.FC = () => {
       case "dashboard":
         return <h2 className="flex justify-center text-3xl font-semibold text-gray-700">Welcome to the Dashboard!</h2>;
       case "addhomestays":
-        return <h2>Add Homestays</h2> // Use the separated UserManagement component
+        return <AddHomestayForm/> // Use the separated UserManagement component
       case "yourhomestays":
-        return <h2>Your homestays</h2>
+        return <YourHomestays/>
       default:
         return null;
     }
@@ -45,7 +47,7 @@ const HostHome: React.FC = () => {
     
     <div className="flex h-screen bg-gray-100">
       {/* Sidebar */}
-      <div className="w-1/6 bg-blue-200 p-4">
+      <div className="w-1/6 h-screen bg-blue-200 p-4">
         {/* Logo */}
         <div className="mb-8">
           <img

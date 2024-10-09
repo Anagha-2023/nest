@@ -9,6 +9,18 @@ interface User {
   googleId?: string;
 }
 
+interface Homestay {
+  _id: string;
+  name: string;
+  country: string;
+  pricePerNight: number;
+  image: string;
+  rooms: number;
+  description: string;
+  services: Array<{ name: string; available: boolean }>;
+  cancellationPeriod: number;
+  offerPercentage?: number;
+}
 
 // Define the shape of the UserState
 interface UserState {
@@ -25,7 +37,9 @@ interface UserState {
   resendError: string | null;
   googleLoading: boolean;
   googleError: string | null;
-
+  homestays: Homestay[]; // Added homestays array
+  homestayLoading: boolean; // Loading state for homestays
+  homestayError: string | null; // Error state for homestays
 }
 
 const initialState: UserState = {
@@ -42,7 +56,9 @@ const initialState: UserState = {
   resendError: null,
   googleLoading: false,
   googleError: null,
-
+  homestays: [], // Initialize homestays as an empty array
+  homestayLoading: false, // Initialize loading state for homestays
+  homestayError: null, // Initialize error state for homestays
 };
 
 
@@ -60,6 +76,9 @@ export const googleSignIn = createAsyncThunk(
     }
   }
 );
+
+
+
 
 //Google login
 export const googleLogin = createAsyncThunk(
@@ -158,6 +177,16 @@ export const login = createAsyncThunk(
   }
 );
 
+//Fetch Homestays
+export const fetchHomestays = createAsyncThunk(
+  'homestays/fetchHomestays', 
+  async () => {
+  const response = await axios.get('/api/users/homstay-listing')
+  console.log("Response:",response.data)
+  return response.data;
+});
+
+
 
 // Async actions using createAsyncThunk
 export const verifyOtp = createAsyncThunk(
@@ -188,6 +217,18 @@ export const resendOtp = createAsyncThunk(
   }
 );
 
+export const userLogout = createAsyncThunk<void, void, {rejectValue: string}>(
+  'user/Logout',
+  async(_,{rejectWithValue}) => {
+    try {
+      await axios.post('/api/users/user-logout');
+    } catch (error) {
+      const axiosError = error as AxiosError<{ message: string }>;
+      return rejectWithValue(axiosError.response?.data?.message || 'Logout failed');
+    }
+  }
+)
+
 // User Slice
 const userSlice = createSlice({
   name: 'user',
@@ -201,8 +242,8 @@ const userSlice = createSlice({
         state.error = null;
       })
       .addCase(verifyOtp.fulfilled, (state, action: PayloadAction<any>) => {
-        state.userInfo.user = action.payload;
-        state.userInfo.token = action.payload;
+        state.userInfo = action.payload;
+        state.token = action.payload.token;
         console.log("OTP verification result:", action.payload);
         state.loading = false;
         state.error = null;
@@ -214,7 +255,6 @@ const userSlice = createSlice({
 
     // OTP Resend
     builder
-
       .addCase(resendOtp.pending, (state) => {
         state.resendLoading = true;
         state.resendError = null;
@@ -229,6 +269,23 @@ const userSlice = createSlice({
         state.resendError = action.payload;
       });
 
+
+      builder
+      .addCase(fetchHomestays.pending, (state) => {
+        state.homestayLoading = true;
+        state.homestayError = null;
+      })
+      .addCase(fetchHomestays.fulfilled, (state, action: PayloadAction<Homestay[]>) => {
+        state.homestayLoading = false;
+        state.homestays = action.payload;
+        console.log(action.payload);
+        
+      })
+      .addCase(fetchHomestays.rejected, (state, action: PayloadAction<any>) => {
+        state.homestayLoading = false;
+        state.homestayError = action.payload || 'Failed to fetch homestays';
+      });
+
     // User Register
     builder
       .addCase(register.pending, (state) => {
@@ -237,9 +294,7 @@ const userSlice = createSlice({
       })
       .addCase(register.fulfilled, (state, action: PayloadAction<any>) => {
         state.userInfo = action.payload;
-        console.log("User registered:", state.userInfo); // Add this
-        console.log("User email registerd:", state.userInfo.user.email);
-
+        state.token = action.payload.token;
         state.registerLoading = false;
       })
       .addCase(register.rejected, (state, action: PayloadAction<any>) => {
@@ -247,10 +302,8 @@ const userSlice = createSlice({
         state.registerError = action.payload;
       });
 
-    // Google Register 
-
+    // Google Sign-In
     builder
-
       .addCase(googleSignIn.pending, (state) => {
         state.googleLoading = true;
         state.googleError = null;
@@ -259,52 +312,42 @@ const userSlice = createSlice({
         state.googleLoading = false;
         state.userInfo = action.payload.user;
         state.token = action.payload.token;
-        console.log("Google Sign-In successful:", state.userInfo);
       })
       .addCase(googleSignIn.rejected, (state, action: PayloadAction<any>) => {
         state.googleLoading = false;
         state.googleError = action.payload;
-        console.log("Google Sign-In failed:", action.payload);
       });
 
-    // Sending Reset Password Email
-
+    // Send Reset Password Email
     builder
-  .addCase(sendResetPasswordEmail.pending, (state) => {
-    state.resendLoading = true;
-    state.resendError = null;
-    state.resendSuccess = null;
-  })
-  .addCase(sendResetPasswordEmail.fulfilled, (state, action: PayloadAction<any>) => {
-    state.resendLoading = false;
-    state.resendSuccess = action.payload.message || 'Password reset email sent';
-  })
-  .addCase(sendResetPasswordEmail.rejected, (state, action: PayloadAction<any>) => {
-    state.resendLoading = false;
-    state.resendError = action.payload as string || 'Failed to send reset email';
-  });
+      .addCase(sendResetPasswordEmail.pending, (state) => {
+        state.resendLoading = true;
+        state.resendError = null;
+        state.resendSuccess = null;
+      })
+      .addCase(sendResetPasswordEmail.fulfilled, (state, action: PayloadAction<any>) => {
+        state.resendLoading = false;
+        state.resendSuccess = action.payload.message || 'Password reset email sent';
+      })
+      .addCase(sendResetPasswordEmail.rejected, (state, action: PayloadAction<any>) => {
+        state.resendLoading = false;
+        state.resendError = action.payload || 'Failed to send reset email';
+      });
 
-
-
-    // Resetting the Password
-
+    // Reset Password
     builder
-
       .addCase(resetPassword.pending, (state) => {
         state.loading = true;
         state.error = null;
       })
       .addCase(resetPassword.fulfilled, (state, action: PayloadAction<any>) => {
         state.loading = false;
-        console.log("Password Reset Successful:", action.payload);
         state.error = null;
       })
       .addCase(resetPassword.rejected, (state, action: PayloadAction<any>) => {
         state.loading = false;
         state.error = action.payload;
-        console.log("Password Reset Failed:", action.payload);
       });
-
 
     // User Login
     builder
@@ -314,15 +357,33 @@ const userSlice = createSlice({
       })
       .addCase(login.fulfilled, (state, action: PayloadAction<any>) => {
         state.userInfo = action.payload;
-        console.log("User logged in:", state.userInfo); // Add this
+        state.token = action.payload.token;
+        localStorage.setItem('token', action.payload.token);
+        localStorage.setItem('role', 'user');
         state.loginLoading = false;
       })
       .addCase(login.rejected, (state, action: PayloadAction<any>) => {
         state.loginLoading = false;
         state.loginError = action.payload;
       });
+
+    // User Logout
+    builder
+      .addCase(userLogout.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(userLogout.fulfilled, (state) => {
+        state.userInfo = null;
+        state.token = null;
+        localStorage.removeItem('token');
+        localStorage.removeItem('role');
+        state.loading = false;
+      })
+      
   },
 });
 
 export const userReducer = userSlice.reducer;
+
 

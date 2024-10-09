@@ -38,7 +38,10 @@ const UserLogin: React.FC = () => {
     if (validateForm()) {
       setLoading(true);
       try {
-        dispatch(login({ email, password }) as any);
+        const result = dispatch(login({ email, password }) as any);
+        if(result?.token) {
+          navigate('/')
+        }
       } catch (error) {
         console.error('Login Error:', error);
       }finally{
@@ -63,6 +66,7 @@ const UserLogin: React.FC = () => {
       const dispatchResult = await dispatch(googleLogin(googleUserData) as any);
 
       if (dispatchResult.meta.requestStatus === 'fulfilled') {
+        localStorage.setItem('token', dispatchResult.payload.token)
         navigate('/');
       } else if (dispatchResult.payload === 'You are blocked by Admin, cannot log in to your account.') {
         setErrors({ email: 'You are blocked by Admin, cannot log in to your account.' });
