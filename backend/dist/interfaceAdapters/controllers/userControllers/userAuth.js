@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.handleLoginUser = exports.googleLogin = exports.resetPassword = exports.forgotPassword = exports.resendOtp = exports.verifyOtp = exports.googleSignIn = exports.registerUser = void 0;
+exports.homestayListing = exports.userLogout = exports.checkBlockStatus = exports.handleLoginUser = exports.googleLogin = exports.resetPassword = exports.forgotPassword = exports.resendOtp = exports.verifyOtp = exports.googleSignIn = exports.registerUser = void 0;
 const bcryptjs_1 = __importDefault(require("bcryptjs"));
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const User_1 = __importDefault(require("../../../entities/User"));
@@ -11,6 +11,7 @@ const Otp_1 = __importDefault(require("../../../entities/Otp"));
 const emailService_1 = require("../../../services/emailService");
 const otpGenerator_1 = require("../../../utils/otpGenerator");
 const userUseCases_1 = require("../../../useCases/userUseCases");
+const Homestay_1 = __importDefault(require("../../../entities/Homestay"));
 // User registration
 const registerUser = async (req, res) => {
     const { name, phone, email, password, confirmPassword } = req.body;
@@ -280,7 +281,8 @@ const handleLoginUser = async (req, res) => {
         if (!isPasswordValid) {
             return res.status(401).json({ message: 'Invalid email or password' });
         }
-        const token = jsonwebtoken_1.default.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+        const token = jsonwebtoken_1.default.sign({ user: { _id: user._id, role: user.role } }, //included role in payload
+        process.env.JWT_SECRET, { expiresIn: '1h' });
         res.status(200).json({ token });
     }
     catch (error) {
@@ -288,3 +290,37 @@ const handleLoginUser = async (req, res) => {
     }
 };
 exports.handleLoginUser = handleLoginUser;
+const checkBlockStatus = async (req, res) => {
+    console.log("Check block status route hit//////////");
+    try {
+        // Ensure req.user is populated by authMiddleware
+        const userId = req.user._id;
+        const user = await User_1.default.findById(userId);
+        console.log("userId:", userId);
+        if (!user || user.isBlocked === undefined) {
+            return res.status(404).json({ message: 'User not found or block status unknown' });
+        }
+        return res.status(200).json({ isBlocked: user.isBlocked });
+    }
+    catch (error) {
+        console.error('Failed to check user block status:', error);
+        return res.status(500).json({ message: 'Failed to check block status' });
+    }
+};
+exports.checkBlockStatus = checkBlockStatus;
+const userLogout = (req, res) => {
+    console.log("User logged out successfully");
+    res.status(200).json({ message: "User logged out successfully" });
+};
+exports.userLogout = userLogout;
+const homestayListing = async (req, res) => {
+    try {
+        const homestays = await Homestay_1.default.find().populate('host', 'name'); // Populate host name
+        return res.status(200).json(homestays);
+    }
+    catch (error) {
+        console.error('Error fetching homestays:', error);
+        return res.status(500).json({ message: 'Internal Server Error' });
+    }
+};
+exports.homestayListing = homestayListing;

@@ -1,10 +1,13 @@
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { JWT_SECRET } from '../config/serverconfig';
-import { findHostByEmail, createHost } from '../repositories/hostRepository';
+import { findHostByEmail, createHost, editHomestay } from '../repositories/hostRepository';
 import { otpService } from '../services/otpService';
 import Otp from '../entities/Otp';
 import Host from '../entities/Host';
+import { addHomestay } from '../repositories/hostRepository';
+import { IHomestay } from '../entities/Homestay';
+import { findHomestaysByHost } from '../repositories/hostRepository';
 
 // Use case to register host with OTP validation
 export const loginHostUseCase = async (email: string, password: string): Promise<string | null> => {
@@ -65,3 +68,42 @@ export const googleSignInUseCase = async (email: string, name: string, googleId:
   const token = jwt.sign({ id: host._id }, JWT_SECRET, { expiresIn: '1h' });
   return { token, host };
 };
+
+// Updated addHomestayUsecases to accept 3 parameters
+export const addHomestayUsecases = async (
+  homestayDetails: IHomestay, 
+  mainImage: Express.Multer.File | null, 
+  additionalImages: Express.Multer.File[]
+): Promise<IHomestay> => {
+  try {
+    homestayDetails.image = mainImage ? mainImage.path : '';
+    homestayDetails.images = additionalImages.map(img => img.path);
+
+    const newHomestay = await addHomestay(homestayDetails);
+    console.log("Successfully Added Homestays:", newHomestay);
+    return newHomestay;
+  } catch (error: unknown) {
+    console.error("Error in addHomestayUsecases:", error);
+    if (error instanceof Error) {
+      throw new Error('Error adding homestay in useCases: ' + error.message);
+    } else {
+      throw new Error('An unknown error occurred while adding homestay');
+    }
+  }
+};
+
+
+export const getHomestays = async (hostId: string) => {
+  return await findHomestaysByHost(hostId);
+}
+
+
+
+
+  export const editHomestayUsecases = async (
+    homestayId: string, updatedDetails: Partial<IHomestay>
+  ):Promise<IHomestay | null> => {
+    const updatedHomestay = await editHomestay(homestayId,updatedDetails);
+    return updatedHomestay;
+  }
+

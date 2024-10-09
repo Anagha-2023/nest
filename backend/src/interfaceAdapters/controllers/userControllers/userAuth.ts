@@ -7,7 +7,7 @@ import { sendOtpEmail } from '../../../services/emailService';
 import { generateOtp } from '../../../utils/otpGenerator';
 import {ForgotPassword, ResetPassword} from '../../../useCases/userUseCases'
 import { JwtPayload } from 'jsonwebtoken';
-
+import Homestay from '../../../entities/Homestay';
 
 // User registration
 export const registerUser = async (req: Request, res: Response) => {
@@ -76,6 +76,7 @@ export const googleSignIn = async (req:Request, res: Response) => {
     return res.status(500).json({ message: 'Internal Server error', error })
   }
 }
+
 
 
 
@@ -328,9 +329,49 @@ export const handleLoginUser = async (req: Request, res: Response) => {
       return res.status(401).json({ message: 'Invalid email or password' });
     }
 
-    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET!, { expiresIn: '1h' });
+    const token = jwt.sign(
+      {user: {_id:user._id, role:user.role }}, //included role in payload
+      process.env.JWT_SECRET!,
+      {expiresIn:'1h'}
+    );
+
     res.status(200).json({ token });
   } catch (error) {
     res.status(500).json({ message: 'Server error', error });
+  }
+};
+
+export const checkBlockStatus = async (req: Request, res: Response) => {
+  console.log("Check block status route hit//////////");
+  
+  try {
+    
+     // Ensure req.user is populated by authMiddleware
+    const userId = req.user._id;
+    const user = await User.findById(userId);
+    console.log("userId:", userId);
+    if (!user || user.isBlocked === undefined) {
+      return res.status(404).json({ message: 'User not found or block status unknown' });
+    }
+
+    return res.status(200).json({ isBlocked: user.isBlocked });
+  } catch (error) {
+    console.error('Failed to check user block status:', error);
+    return res.status(500).json({ message: 'Failed to check block status' });
+  }
+};
+
+export const userLogout = (req:Request, res:Response) => {
+  console.log("User logged out successfully");
+  res.status(200).json({message:"User logged out successfully"})
+}
+
+export const homestayListing = async (req: Request, res: Response) => {
+  try {
+    const homestays = await Homestay.find().populate('host', 'name'); // Populate host name
+    return res.status(200).json(homestays);
+  } catch (error) {
+    console.error('Error fetching homestays:', error);
+    return res.status(500).json({ message: 'Internal Server Error' });
   }
 };

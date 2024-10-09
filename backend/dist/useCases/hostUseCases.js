@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.googleSignInUseCase = exports.resendOtpUseCase = exports.verifyOtpAndRegisterHostUseCase = exports.registerHostUseCase = exports.loginHostUseCase = void 0;
+exports.editHomestayUsecases = exports.getHomestays = exports.addHomestayUsecases = exports.googleSignInUseCase = exports.resendOtpUseCase = exports.verifyOtpAndRegisterHostUseCase = exports.registerHostUseCase = exports.loginHostUseCase = void 0;
 const bcryptjs_1 = __importDefault(require("bcryptjs"));
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const serverconfig_1 = require("../config/serverconfig");
@@ -11,6 +11,8 @@ const hostRepository_1 = require("../repositories/hostRepository");
 const otpService_1 = require("../services/otpService");
 const Otp_1 = __importDefault(require("../entities/Otp"));
 const Host_1 = __importDefault(require("../entities/Host"));
+const hostRepository_2 = require("../repositories/hostRepository");
+const hostRepository_3 = require("../repositories/hostRepository");
 // Use case to register host with OTP validation
 const loginHostUseCase = async (email, password) => {
     const host = await (0, hostRepository_1.findHostByEmail)(email);
@@ -65,3 +67,32 @@ const googleSignInUseCase = async (email, name, googleId) => {
     return { token, host };
 };
 exports.googleSignInUseCase = googleSignInUseCase;
+// Updated addHomestayUsecases to accept 3 parameters
+const addHomestayUsecases = async (homestayDetails, mainImage, additionalImages) => {
+    try {
+        homestayDetails.image = mainImage ? mainImage.path : '';
+        homestayDetails.images = additionalImages.map(img => img.path);
+        const newHomestay = await (0, hostRepository_2.addHomestay)(homestayDetails);
+        console.log("Successfully Added Homestays:", newHomestay);
+        return newHomestay;
+    }
+    catch (error) {
+        console.error("Error in addHomestayUsecases:", error);
+        if (error instanceof Error) {
+            throw new Error('Error adding homestay in useCases: ' + error.message);
+        }
+        else {
+            throw new Error('An unknown error occurred while adding homestay');
+        }
+    }
+};
+exports.addHomestayUsecases = addHomestayUsecases;
+const getHomestays = async (hostId) => {
+    return await (0, hostRepository_3.findHomestaysByHost)(hostId);
+};
+exports.getHomestays = getHomestays;
+const editHomestayUsecases = async (homestayId, updatedDetails) => {
+    const updatedHomestay = await (0, hostRepository_1.editHomestay)(homestayId, updatedDetails);
+    return updatedHomestay;
+};
+exports.editHomestayUsecases = editHomestayUsecases;

@@ -3,7 +3,7 @@ import express from 'express';
 import {blockUser, getAllUsers, unblockUser,} from '../controllers/adminControllers/userManagement';
 import { getAllHosts, blockHost, unblockHost } from '../controllers/adminControllers/hostManagement'; 
 import { handleAdminLogin,handleLogout } from '../controllers/adminControllers/adminAuth';
-import authMiddleware from '../../middlewares/authMiddleware';
+import {authMiddleware} from '../../middlewares/authMiddleware';
 
 const router = express.Router();
 

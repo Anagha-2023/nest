@@ -120,27 +120,28 @@ export const hostLoginController = async (req: Request, res: Response) => {
             return res.status(401).json({ message: 'Invalid email or password.' });
         }
         if (host.isBlocked) {
-            return res.status(403).json({ message: 'You are blocked by Admin, You cannot login' })
+            return res.status(403).json({ message: 'You are blocked by Admin, You cannot login' });
         }
+
         // Check if password is defined
-        if (!password) {
+        if (!password || !host.password) {
             return res.status(401).json({ message: 'Password is required.' });
         }
 
-        // Ensure host.password is defined
-        const hashedPassword = host.password;
-        if (!hashedPassword) {
-            return res.status(401).json({ message: 'No password found for this user.' });
-        }
 
-        const isMatch = await bcrypt.compare(password, hashedPassword);
+        const isMatch = await bcrypt.compare(password, host.password);
         if (!isMatch) {
             return res.status(401).json({ message: 'Invalid email or password.' });
         }
 
-        const token = jwt.sign({ id: host._id }, process.env.JWT_SECRET!, { expiresIn: '1h' });
+        // Include the role in the JWT payload
+        const token = jwt.sign(
+            {user: {_id:host._id, role:host.role}},
+            process.env.JWT_SECRET!,{expiresIn:'1h'}
+        );
         res.status(200).json({ token });
     } catch (error) {
+        console.error(error); // Log the error for debugging
         res.status(500).json({ message: 'Server error', error });
     }
 };

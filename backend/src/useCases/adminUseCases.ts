@@ -31,8 +31,8 @@ export const adminLogin = async (email: string, password: string) => {
     },
   };
 
+  
   // Generate the JWT token
   const token = jwt.sign(payload, process.env.JWT_SECRET as string, { expiresIn: '1h' });
-
   return { token, admin };
 };
