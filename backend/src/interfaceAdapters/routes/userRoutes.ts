@@ -1,5 +1,6 @@
 import express from 'express';
 import  {authMiddleware}  from '../../middlewares/authMiddleware'; // Middleware to ensure user is authenticated
+
 import {
   registerUser, 
   handleLoginUser, 
@@ -32,4 +33,5 @@ router.get('/homstay-listing', homestayListing)
 
 //Logout
 router.post('/user-logout', userLogout)
+
 export default router;
