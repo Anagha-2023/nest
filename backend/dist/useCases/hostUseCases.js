@@ -70,6 +70,16 @@ exports.googleSignInUseCase = googleSignInUseCase;
 // Updated addHomestayUsecases to accept 3 parameters
 const addHomestayUsecases = async (homestayDetails, mainImage, additionalImages) => {
     try {
+        //Parse 'services' if it is a string
+        if (typeof homestayDetails.services === 'string') {
+            try {
+                homestayDetails.services = JSON.parse(homestayDetails.services);
+            }
+            catch (error) {
+                console.error("Error parsing services", error);
+                throw new Error("Invlaid format for Services");
+            }
+        }
         homestayDetails.image = mainImage ? mainImage.path : '';
         homestayDetails.images = additionalImages.map(img => img.path);
         const newHomestay = await (0, hostRepository_2.addHomestay)(homestayDetails);

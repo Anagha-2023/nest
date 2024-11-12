@@ -7,7 +7,7 @@ import { MulterRequest } from '../../../types/multerTypes'; // Ensure correct pa
 export const addHomestayController = async (req: Request, res: Response): Promise<void> => {
   try {
     const mulReq = req as MulterRequest;
-
+    console.log("Recieved Data:",req.body)
     const homestayDetails: IHomestay = {...mulReq.body, host: req.user};
     console.log("Homestay Details====", homestayDetails);
     const mainImage = mulReq.files?.image ? mulReq.files.image[0] : null;

@@ -5,6 +5,7 @@ const hostUseCases_1 = require("../../../useCases/hostUseCases");
 const addHomestayController = async (req, res) => {
     try {
         const mulReq = req;
+        console.log("Recieved Data:", req.body);
         const homestayDetails = { ...mulReq.body, host: req.user };
         console.log("Homestay Details====", homestayDetails);
         const mainImage = mulReq.files?.image ? mulReq.files.image[0] : null;

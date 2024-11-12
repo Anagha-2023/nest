@@ -76,6 +76,15 @@ export const addHomestayUsecases = async (
   additionalImages: Express.Multer.File[]
 ): Promise<IHomestay> => {
   try {
+    //Parse 'services' if it is a string
+    if(typeof homestayDetails.services === 'string') {
+      try {
+        homestayDetails.services = JSON.parse(homestayDetails.services);
+      } catch (error) {
+        console.error("Error parsing services",error);
+        throw new Error("Invlaid format for Services");
+      }
+    }
     homestayDetails.image = mainImage ? mainImage.path : '';
     homestayDetails.images = additionalImages.map(img => img.path);
 
