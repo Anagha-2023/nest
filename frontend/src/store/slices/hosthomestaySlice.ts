@@ -6,6 +6,7 @@ interface HomestayState {
   homestay: any;
   status: 'idle' | 'loading' | 'succeeded' | 'failed';
   error: string | null;
+  success: boolean;
 }
 
 const initialState: HomestayState = {
@@ -13,6 +14,7 @@ const initialState: HomestayState = {
   homestay: null,
   status: 'idle',
   error: null,
+  success: false,
 };
 
 export const addHomestay = createAsyncThunk(
@@ -104,21 +106,28 @@ export const fetchHomestays = createAsyncThunk(
 const homestySlice = createSlice({
   name: 'homestay',
   initialState,
-  reducers: {},
+  reducers: {
+    resetSuccess(state) {
+      state.success = false;
+    }
+  },
   extraReducers: (builder) => {
     builder
       // Handle addHomestay
       .addCase(addHomestay.pending, (state) => {
         state.status = 'loading';
+        state.success = false;
       })
       .addCase(addHomestay.fulfilled, (state, action) => {
         state.status = 'succeeded';
         state.homestay = action.payload;
+        state.success = true;
         state.error = null;
       })
       .addCase(addHomestay.rejected, (state, action) => {
         state.status = 'failed';
         state.error = action.payload as string;
+        state.success = false;
       })
 
       //Update Homestay
@@ -155,5 +164,5 @@ const homestySlice = createSlice({
   },
 });
 
-
+export const { resetSuccess } = homestySlice.actions;
 export const homestayReducer = homestySlice.reducer

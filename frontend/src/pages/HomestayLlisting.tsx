@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchHomestays } from '../store/slices/userSlice';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faHeart as solidHeart, faSearch, faFilter, faUserCircle  } from '@fortawesome/free-solid-svg-icons';
+import { faHeart as solidHeart, faSearch, faFilter, faUserCircle } from '@fortawesome/free-solid-svg-icons';
 import { faHeart as regularHeart } from '@fortawesome/free-regular-svg-icons';
 const HomestayListing: React.FC = () => {
   const dispatch = useDispatch();
@@ -91,10 +91,10 @@ const HomestayListing: React.FC = () => {
         {/* Header with logo and navigation */}
         <header className="flex items-center justify-between px-6 py-4 mb-8 ">
           {/* User Icon */}
-          
-<div className="absolute top-6 right-5 flex items-center justify-center w-10 h-10 rounded-full  bg-gray-50 shadow-md hover:cursor-pointer shadow-gray-700">
-  <FontAwesomeIcon icon={faUserCircle} className="text-gray-900 text-2xl" />
-</div>
+
+          <div className="absolute top-6 right-5 flex items-center justify-center w-10 h-10 rounded-full  bg-gray-50 shadow-md hover:cursor-pointer shadow-gray-700">
+            <FontAwesomeIcon icon={faUserCircle} className="text-gray-900 text-2xl" />
+          </div>
 
           <div className="flex items-center w-full lg:justify-start">
             <img src="../src/assets/images/logo_black.png" alt="Logo" className="w-24" />
@@ -106,7 +106,60 @@ const HomestayListing: React.FC = () => {
               </svg>
             </button>
 
-            {showfilterOption && (
+            
+
+
+            {/* Navigation Links */}
+            <nav className="hidden lg:flex space-x-8 ml-96 text-gray-800 text-base">
+              <a href="#" className="hover:border-b-2 border-blue-500">Home</a>
+              <a href="#about" className="hover:border-b-2 border-blue-500">Explore</a>
+              <a href="#contact" className="hover:border-b-2 border-blue-500">Contact us</a>
+              <a href="#about" className="hover:border-b-2 border-blue-500">About us</a>
+              <a href="#host" className="hover:border-b-2 border-blue-500">Become a host</a>
+            </nav>
+          </div>
+
+          {/* Mobile Menu Links */}
+          {isMobileMenuOpen && (
+            <div className="lg:hidden w-1/3 bg-white bg-opacity-95  shadow-lg absolute rounded-xl top-16 right-12 z-10">
+              <nav className="flex flex-col items-center py-4 space-y-4 text-blue-900 text-base font-semibold ">
+                <a href="#" onClick={toggleMobileMenu} className=' flex justify-center hover:underline underline-offset-4 w-2/3 hover:scale-105'>Home</a>
+                <a href="#about" onClick={toggleMobileMenu} className=' flex justify-center hover:underline underline-offset-4 w-2/3 hover:scale-105'>Explore</a>
+                <a href="#contact" onClick={toggleMobileMenu} className=' flex justify-center hover:underline underline-offset-4 w-2/3 hover:scale-105'>Contact us</a>
+                <a href="#about" onClick={toggleMobileMenu} className=' flex justify-center hover:underline underline-offset-4 w-2/3 hover:scale-105'>About us</a>
+                <a href="#host" onClick={toggleMobileMenu} className=' flex justify-center hover:underline underline-offset-4 w-2/3 hover:scale-105'>Become a host</a>
+              </nav>
+            </div>
+          )}
+        </header>
+
+        {/* Search bar */}
+        <div className='flex justify-between items-center mb-10 w-full'>
+          <div className="flex-grow flex items-center justify-center">
+            <div className="relative w-4/5 mx-auto">
+              <FontAwesomeIcon icon={faSearch} className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-950" />
+              <input
+                className="pl-12 pt-3 pb-3 rounded-full bg-blue-50 bg-opacity-80 w-full shadow-md shadow-gray-500 focus:shadow-lg focus:shadow-gray-500  text-gray-950 placeholder-gray-400 font-medium focus:outline-none"
+                type="text"
+                value={searchQuery}
+                onChange={handleSearchChange}
+                placeholder="Search here by name and country..."
+              />
+            </div>
+          </div>
+
+          {/*Filter Functionality*/}
+          <div className="flex justify-end ml-auto">
+            <button onClick={toggleFilterOption} className="pl-5 pr-5 pt-2 pb-2 bg-blue-100 rounded-full shadow-md shadow-gray-500 flex items-center space-x-2 hover:shadow-md hover:shadow-gray-500">
+              <div className='hover:font-medium'>
+                <FontAwesomeIcon icon={faFilter} className="text-gray-950" />
+                <span className="text-gray-950 ml-2">Filter</span>
+              </div>
+            </button>
+          </div>
+        </div>
+
+        {showfilterOption && (
               <div className='absolute right-6 top-40 mt-2 w-48 bg-white rounded-md shadow-lg z-10'>
                 <div className='p-2'>
                   <span
@@ -153,68 +206,12 @@ const HomestayListing: React.FC = () => {
               </div>
             )}
 
-
-            {/* Navigation Links */}
-            <nav className="hidden lg:flex space-x-8 ml-96 text-gray-800 text-base">
-              <a href="#" className="hover:border-b-2 border-blue-500">Home</a>
-              <a href="#about" className="hover:border-b-2 border-blue-500">Explore</a>
-              <a href="#contact" className="hover:border-b-2 border-blue-500">Contact us</a>
-              <a href="#about" className="hover:border-b-2 border-blue-500">About us</a>
-              <a href="#host" className="hover:border-b-2 border-blue-500">Become a host</a>
-            </nav>
-          </div>
-
-          {/* Mobile Menu Links */}
-          {isMobileMenuOpen && (
-            <div className="lg:hidden w-1/3 bg-white bg-opacity-95  shadow-lg absolute rounded-xl top-16 right-12 z-10">
-              <nav className="flex flex-col items-center py-4 space-y-4 text-blue-900 text-base font-semibold ">
-                <a href="#" onClick={toggleMobileMenu} className=' flex justify-center hover:underline underline-offset-4 w-2/3 hover:scale-105'>Home</a>
-                <a href="#about" onClick={toggleMobileMenu} className=' flex justify-center hover:underline underline-offset-4 w-2/3 hover:scale-105'>Explore</a>
-                <a href="#contact" onClick={toggleMobileMenu} className=' flex justify-center hover:underline underline-offset-4 w-2/3 hover:scale-105'>Contact us</a>
-                <a href="#about" onClick={toggleMobileMenu} className=' flex justify-center hover:underline underline-offset-4 w-2/3 hover:scale-105'>About us</a>
-                <a href="#host" onClick={toggleMobileMenu} className=' flex justify-center hover:underline underline-offset-4 w-2/3 hover:scale-105'>Become a host</a>
-              </nav>
-            </div>
-          )}
-        </header>
-
-
-        <div className='flex justify-between items-center mb-10 w-full'>
-          <div className="flex-grow flex items-center justify-center">
-            <div className="relative w-4/5 mx-auto">
-              <FontAwesomeIcon icon={faSearch} className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-950" />
-              <input
-                className="pl-12 pt-3 pb-3 rounded-full bg-sky-300 bg-opacity-80 w-full shadow-md shadow-gray-500 focus:shadow-lg focus:shadow-gray-500  text-gray-950 placeholder-gray-600 font-medium focus:outline-none"
-                type="text"
-                value={searchQuery}
-                onChange={handleSearchChange}
-                placeholder="Search here by name and country..."
-              />
-            </div>
-          </div>
-
-          <div className="flex justify-end ml-auto">
-            <button onClick={toggleFilterOption} className="pl-5 pr-5 pt-2 pb-2 bg-sky-300 rounded-full shadow-md shadow-gray-500 flex items-center space-x-2 hover:shadow-md hover:shadow-gray-500">
-              <div className='hover:font-medium'>
-                <FontAwesomeIcon icon={faFilter} className="text-gray-950" />
-                <span className="text-gray-950 ml-2">Filter</span>
-              </div>
-            </button>
-          </div>
-        </div>
-
-
-
-
-
-
         {/* Homestay Listings */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {filteredHomestays.length > 0 ? (
             filteredHomestays.map((homestay) => {
               const imagePath = homestay.image.startsWith('C:')
-                ? homestay.image.split('backend')[1]
-                : homestay.image.replace(/\\/g, '/');
+                ? homestay.image.split('backend')[1] : homestay.image.replace(/\\/g, '/');
               const imageUrl = `http://localhost:5000${imagePath}`;
 
               return (
