@@ -93,7 +93,11 @@ const VerifyHostOtp: React.FC = () => {
 
             if (result.meta.requestStatus === 'fulfilled') { // Check if payload exists
                 console.log("OTP verified Successfully");
-                navigate("/host-login");
+                navigate("/registration-pending", {
+                  state:{
+                    message:'Your Registration is Pending admin Approval. You will recieve an amail once your account is approved.'
+                  }
+                });
             } else {
                 console.error("OTP verification failed:", result.error.message);
                 setOtpError(result.error.message || "An unknown error occurred. Please try again.");

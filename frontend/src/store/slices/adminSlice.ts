@@ -168,6 +168,43 @@ export const unblockHost = createAsyncThunk<Host, string, { rejectValue: string 
   }
 );
 
+// Approve host
+export const approveHost = createAsyncThunk(
+  'admin/approveHost',
+  async ({ hostId }: { hostId: string }, { rejectWithValue }) => {
+    try {
+      console.log("Attempting to approve host with ID:", hostId);
+      
+      const response = await axios.put(`/api/admin/${hostId}/approve`, {}, {
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+      
+      console.log("Approve Host Response:", response.data);
+      return response.data;
+    } catch (error: any) {
+      console.error("Approve Host Error:", error.response?.data);
+      return rejectWithValue(error.response?.data.message || 'Failed to approve host');
+    }
+  }
+);
+
+// Reject host
+export const rejectHost = createAsyncThunk(
+  'admin/rejectHost',
+  async (hostId: string, { rejectWithValue }) => {
+    try {
+      const response = await axios.put(`/api/admin/${hostId}/reject`);
+      console.log("Rejected Host response is:",response.data);
+      
+      return response.data;
+    } catch (error: any) {
+      return rejectWithValue(error.response?.data.message || 'Failed to reject host');
+    }
+  }
+);
+
 export const logout = createAsyncThunk<void, void, {rejectValue: string}>(
   'admin/Logout',
   async(_, {rejectWithValue}) => {
@@ -372,7 +409,41 @@ const adminSlice = createSlice({
     .addCase(unblockHost.rejected, (state, action) => {
       state.loading = false;
       state.error = action.error.message || 'Failed to unblock user';
+    })
+
+    .addCase(approveHost.pending, (state) => {
+      state.loading = true;
+      state.error = null;
+    })
+    .addCase(approveHost.fulfilled, (state, action) => {
+      state.loading = false;
+      // Update the specific host in hostInfo
+      state.hostInfo = state.hostInfo.map(host => 
+        host._id === action.payload.host._id 
+          ? { ...host, approved: true, verified: true } 
+          : host
+      );
+    })
+    .addCase(approveHost.rejected, (state, action) => {
+      state.loading = false;
+      state.error = action.payload as string;
+    })
+    // Reject Host
+    .addCase(rejectHost.pending, (state) => {
+      state.loading = true;
+      state.error = null;
+    })
+    .addCase(rejectHost.fulfilled, (state, action) => {
+      state.loading = false;
+      state.hostInfo = state.hostInfo.map(host => 
+        host._id === action.payload.host._id ? action.payload.host : host
+      );
+    })
+    .addCase(rejectHost.rejected, (state, action) => {
+      state.loading = false;
+      state.error = action.payload as string;
     });
+
 
     //FETCH HOSTS
 

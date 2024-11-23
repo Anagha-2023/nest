@@ -18,6 +18,7 @@ import HostManagement from "./components/admin/HostManagement";
 import useBlockChecker from "./hooks/useBlockChecker";
 import HomestayListing from "./pages/HomestayLlisting";
 import NotFound from "./pages/NotFound";
+import RegistrationPending from "./pages/RegistrationPending";
 
 const App: React.FC = () => {
   return (
@@ -41,6 +42,7 @@ const App: React.FC = () => {
         {/* <Route path="/getAllHomestays" element={<HomestayListing/>}/> */}
 
         <Route path="/homstay-listing" element={<HomestayListing />} />
+        <Route path="/registration-pending" element={<RegistrationPending />} />
         <Route path="/user-management" element={<ProtectedRoute element={<UserManagement />} requiredRole="admin" />} />
         <Route path="/host-management" element={<ProtectedRoute element={<HostManagement />} requiredRole="admin" />} />
 

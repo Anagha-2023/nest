@@ -37,9 +37,13 @@ const HostLogin: React.FC = () => {
     if(validateForm()){
       setLoading(true)
       try {
-        dispatch(hostLogin({email, password}) as any)
+        const result = await dispatch(hostLogin({email, password}) as any);
+        
+        if(result.payload === 'Host is rejected, cannot log in to your account.') {
+          setErrors({ email: 'Your host registration has been rejected. Please contact support.' });
+        }
       } catch (error) {
-        console.error("Login Error:", error);
+        console.error("Login Error:", error); 
       }finally{
         setLoading(false)
       }
@@ -53,19 +57,20 @@ const HostLogin: React.FC = () => {
     try {
       const result = await signInWithPopup(auth, googleProvider);
       const user = result.user;
-
-
+  
       const googleHostData = {
         email:user.email!,
         googleId: user.uid,
       };
       
       const dispatchResult = await dispatch(hostgoogleLogin(googleHostData) as any);
-
+  
       if(dispatchResult.meta.requestStatus === 'fulfilled'){
         navigate('/host-home');
       }else if (dispatchResult.payload === 'You are blocked by Admin, cannot log in to your account.') {
         setErrors({ email: 'You are blocked by Admin, cannot log in to your account.' });
+      }else if (dispatchResult.payload === 'Host is rejected, cannot log in to your account.') {
+        setErrors({ email: 'Your host registration has been rejected. Please contact support.' });
       }else{
         setErrors({ email: 'Host not found, please register first.' });
       }
@@ -74,7 +79,6 @@ const HostLogin: React.FC = () => {
     }finally{
       setGoogleLoading(false)
     }
-
   }
 
   const validateForm = (): boolean => {
