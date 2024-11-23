@@ -50,38 +50,44 @@ const verifyOtpController = async (req, res) => {
         }
         // Check if the host already exists in the system
         let host = await Host_1.default.findOne({ email });
-        // If the host does not exist, register a new host
+        // If the host does not exist, create a pending host record and save the password
         if (!host) {
-            const hashedPassword = await bcryptjs_1.default.hash(password, 10);
+            const hashedPassword = await bcryptjs_1.default.hash(password, 10); // Hash the password
             host = new Host_1.default({
                 name,
                 email,
                 phone,
-                password: hashedPassword,
+                password: hashedPassword, // Save the hashed password
                 role: role || 'host', // Provide default role if not provided
-                verified: true
+                verified: true, // Mark as verified immediately after OTP success
+                approved: false, // Approved will be handled later by the admin
             });
             await host.save();
-            return res.status(201).json({
-                message: 'User Registered Successfully',
-                host: { name: host.name, email: host.email, phone: host.phone, role: host.role },
+            // Remove the OTP record after successful verification
+            await Otp_1.default.deleteOne({ _id: otpRecord._id });
+            return res.status(200).json({
+                message: 'OTP verification success, Registration Pending',
+                host: { name: host.name, email: host.email, phone: host.phone, role: host.role, verified: host.verified, approved: host.approved },
                 token: jsonwebtoken_1.default.sign({ id: host._id }, process.env.JWT_SECRET, { expiresIn: '1h' })
             });
         }
-        // If the host exists but is already verified
-        if (host.verified) {
-            return res.status(400).json({ message: "Host already registered and verified" });
+        // If the host exists but is already verified and approved
+        if (host.verified && host.approved) {
+            return res.status(400).json({ message: "Host already registered, verified, and approved" });
         }
-        // If the host exists but is not verified, mark them as verified
-        host.verified = true;
+        // If the host exists but is not verified, mark them as verified and pending
+        const hashedPassword = await bcryptjs_1.default.hash(password, 10); // Hash the password again if needed
+        host.password = hashedPassword; // Update password in the existing record
+        host.verified = true; // Mark the host as verified after OTP success
+        host.approved = false; // Keep the host as pending approval
         await host.save();
         // Remove the OTP record after successful verification
         await Otp_1.default.deleteOne({ _id: otpRecord._id });
         // Generate a JWT token
         const token = jsonwebtoken_1.default.sign({ id: host._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
         return res.status(200).json({
-            message: 'OTP verification success, Registration completed',
-            host: { name: host.name, email: host.email, phone: host.phone, role: host.role },
+            message: 'OTP verification success, Registration Pending',
+            host: { name: host.name, email: host.email, phone: host.phone, role: host.role, verified: host.verified, approved: host.approved },
             token
         });
     }
@@ -104,6 +110,9 @@ const hostLoginController = async (req, res) => {
         }
         if (host.isBlocked) {
             return res.status(403).json({ message: 'You are blocked by Admin, You cannot login' });
+        }
+        if (!host.approved) {
+            return res.status(403).json({ message: 'You need admin approval, You cannot login' });
         }
         // Check if password is defined
         if (!password || !host.password) {

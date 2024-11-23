@@ -1,9 +1,10 @@
 import express from 'express';
 
 import {blockUser, getAllUsers, unblockUser,} from '../controllers/adminControllers/userManagement';
-import { getAllHosts, blockHost, unblockHost } from '../controllers/adminControllers/hostManagement'; 
+import { getAllHosts, blockHost, unblockHost,approveHostController, rejectHostController } from '../controllers/adminControllers/hostManagement'; 
 import { handleAdminLogin,handleLogout } from '../controllers/adminControllers/adminAuth';
 import {authMiddleware} from '../../middlewares/authMiddleware';
+import { upload } from '../../utils/multer';
 
 const router = express.Router();
 
@@ -19,6 +20,8 @@ router.get('/host-management', getAllHosts);
 router.patch('/block-host/:id', blockHost);
 router.patch('/unblock-host/:id', unblockHost);
 
+router.put('/:hostId/approve', approveHostController)
+router.put('/:hostId/reject', rejectHostController)
 //Logout
 router.post('/admin-logout', handleLogout)
 

@@ -35,6 +35,7 @@ export const authMiddleware = (requiredRole: string) => {
 
       // Attach user information to the request
       req.user = decoded.user;
+      console.log(req.user)
       next();
     } catch (error) {
       console.error("Token verification error:", error); // Log error for verification failure

@@ -29,6 +29,7 @@ const authMiddleware = (requiredRole) => {
             }
             // Attach user information to the request
             req.user = decoded.user;
+            console.log(req.user);
             next();
         }
         catch (error) {

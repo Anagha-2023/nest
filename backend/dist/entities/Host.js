@@ -30,19 +30,22 @@ const HostSchema = new mongoose_1.Schema({
     email: { type: String, required: true, unique: true },
     phone: {
         type: String,
+        unique: true,
         required: function () {
             return !this.googleId; // Phone is required only if googleId is not present
-        }
+        },
     },
     password: {
         type: String,
         required: function () {
             return !this.googleId; // Password is required only if googleId is not present
-        }
+        },
     },
     role: { type: String, required: true },
     status: { type: String, enum: ['pending', 'approved', 'rejected'], default: 'pending' },
     verified: { type: Boolean, required: true },
+    approved: { type: Boolean, default: false },
+    pdfUrl: { type: String }, // Add pdfUrl field to schema
     isBlocked: { type: Boolean, default: false },
 }, { timestamps: true });
 const Host = mongoose_1.default.model('Host', HostSchema);

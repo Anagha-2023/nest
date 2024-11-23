@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import Host from '../../../entities/Host';
+import { sendApprovalEmail } from '../../../services/emailService';  // Adjust the path if necessary
 
 //Fetch All Hosts
 export const getAllHosts = async (req: Request, res: Response) => {
@@ -60,6 +61,80 @@ export const unblockHost = async (req:Request, res:Response) => {
     return res.status(500).json({ message:"Error to unblock host, Internal server error" })    
   }
 }
+
+export const approveHostController = async (req: Request, res: Response) => {
+  try {
+    const { hostId } = req.params;
+    
+    console.log(`Attempting to approve host with ID: ${hostId}`);
+    
+    const host = await Host.findById(hostId);
+    
+    if (!host) {
+      console.error(`No host found with ID: ${hostId}`);
+      return res.status(404).json({ message: 'Host not found' });
+    }
+
+    host.verified = true;
+    host.approved = true;
+
+    await host.save();
+
+    // Send approval email
+    await sendApprovalEmail(host.email, host.name);
+
+    res.status(200).json({
+      message: 'Host approved successfully',
+      host: {
+        _id: host._id,
+        name: host.name,
+        email: host.email,
+        phone: host.phone,
+        verified: host.verified,
+        approved: host.approved,
+      },
+    });
+  } catch (error) {
+    console.error("Full error in approveHostController:", error);
+    return res.status(500).json({ 
+      message: 'Server error', 
+      errorDetails: error instanceof Error ? error.message : 'Unknown error' 
+    });
+  }
+};
+
+// Reject host
+export const rejectHostController = async (req: Request, res: Response) => {
+  try {
+    const { hostId } = req.params;
+    console.log("HostId:", hostId);
+    
+    const host = await Host.findById(hostId);
+
+    if (!host) {
+      return res.status(404).json({ message: 'Host not found' });
+    }
+
+    host.verified = false;
+    host.approved = false;
+    await host.save();
+
+    return res.status(200).json({
+      message: 'Host rejected successfully',
+      host: {
+        _id: host._id,
+        name: host.name,
+        email: host.email,
+        phone: host.phone,
+        verified: host.verified,
+        approved: host.approved
+      }
+    });
+  } catch (error) {
+    console.error('Error rejecting host:', error);
+    return res.status(500).json({ message: 'Server error' });
+  }
+};
 
 //APPROVE OR REJECT HOST
 

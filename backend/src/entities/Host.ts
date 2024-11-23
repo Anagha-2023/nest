@@ -8,35 +8,42 @@ export interface IHost extends Document {
   phone?: string;
   googleId?: string;
   role: 'host';
-  status:'pending'| 'approved' | 'rejected' ;
+  status: 'pending' | 'approved' | 'rejected';
   verified: boolean;
+  approved: boolean;
+  pdfUrl?: string; // Add pdfUrl as an optional property
   createdAt: Date;
   updatedAt: Date;
   isBlocked: boolean;
 }
 
 // Create the Host schema
-const HostSchema = new Schema<IHost>({
-  name: { type: String, required: true },
-  email: { type: String, required: true, unique: true },
-  phone: { 
-    type: String, 
-    required: function() {
-      return !this.googleId; // Phone is required only if googleId is not present
-    }
+const HostSchema = new Schema<IHost>(
+  {
+    name: { type: String, required: true },
+    email: { type: String, required: true, unique: true },
+    phone: {
+      type: String,
+      unique:true,
+      required: function () {
+        return !this.googleId; // Phone is required only if googleId is not present
+      },
+    },
+    password: {
+      type: String,
+      required: function () {
+        return !this.googleId; // Password is required only if googleId is not present
+      },
+    },
+    role: { type: String, required: true },
+    status: { type: String, enum: ['pending', 'approved', 'rejected'], default: 'pending' },
+    verified: { type: Boolean, required: true },
+    approved: { type: Boolean, default: false },
+    pdfUrl: { type: String }, // Add pdfUrl field to schema
+    isBlocked: { type: Boolean, default: false },
   },
-  password: { 
-    type: String, 
-    required: function() {
-      return !this.googleId; // Password is required only if googleId is not present
-    }
-  },
-  role: { type: String, required: true },
-  status: { type: String, enum: ['pending', 'approved', 'rejected'], default: 'pending' },
-  verified: { type: Boolean, required: true },
-  isBlocked: {type: Boolean, default:false},
-  
-}, { timestamps: true });
+  { timestamps: true }
+);
 
 const Host = mongoose.model<IHost>('Host', HostSchema);
 

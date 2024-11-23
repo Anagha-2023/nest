@@ -17,6 +17,8 @@ router.patch('/unblock-user/:id', userManagement_1.unblockUser);
 router.get('/host-management', hostManagement_1.getAllHosts);
 router.patch('/block-host/:id', hostManagement_1.blockHost);
 router.patch('/unblock-host/:id', hostManagement_1.unblockHost);
+router.put('/:hostId/approve', hostManagement_1.approveHostController);
+router.put('/:hostId/reject', hostManagement_1.rejectHostController);
 //Logout
 router.post('/admin-logout', adminAuth_1.handleLogout);
 exports.default = router;
