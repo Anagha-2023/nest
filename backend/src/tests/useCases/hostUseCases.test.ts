@@ -1,9 +1,9 @@
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
-import { loginHostUseCase, registerHostUseCase } from '../../useCases/hostUseCases';
-import * as hostRepository from '../../repositories/hostRepository';
+import { loginHostUseCase, registerHostUseCase } from '../../useCases/hostUseCases/hostUseCases';
+import * as hostRepository from '../../repositories/hostRepository/hostRepository';
 import { IHost } from '../../entities/Host';
-import {  verifyOtpAndRegisterHostUseCase } from '../../useCases/hostUseCases';
+import {  verifyOtpAndRegisterHostUseCase } from '../../useCases/hostUseCases/hostUseCases';
 import { otpService } from '../../services/otpService';
 
 // Mocking dependencies

@@ -8,7 +8,8 @@ const cors_1 = __importDefault(require("cors"));
 const path_1 = __importDefault(require("path"));
 const userRoutes_1 = __importDefault(require("../interfaceAdapters/routes/userRoutes"));
 const adminRoutes_1 = __importDefault(require("../interfaceAdapters/routes/adminRoutes"));
-const hostRoutes_1 = __importDefault(require("../interfaceAdapters/routes/hostRoutes"));
+const hostRoutes_1 = __importDefault(require("../interfaceAdapters/routes/hostRoutes/hostRoutes"));
+const categoryRoutes_1 = __importDefault(require("../interfaceAdapters/routes/hostRoutes/categoryRoutes"));
 const app = (0, express_1.default)();
 // Enable CORS
 app.use((0, cors_1.default)({
@@ -25,4 +26,5 @@ app.use('/uploads', express_1.default.static(path_1.default.join(__dirname, '../
 app.use('/api/users', userRoutes_1.default);
 app.use('/api/admin', adminRoutes_1.default);
 app.use('/api/hosts', hostRoutes_1.default);
+app.use('/api/categories', categoryRoutes_1.default);
 exports.default = app;

@@ -1,5 +1,5 @@
 import {Request, Response} from 'express';
-import { addHomestayUsecases, editHomestayUsecases, getHomestays } from '../../../useCases/hostUseCases';
+import { addHomestayUsecases, editHomestayUsecases, getHomestays } from '../../../useCases/hostUseCases/hostUseCases';
 import { IHomestay } from '../../../entities/Homestay';
 import { MulterRequest } from '../../../types/multerTypes'; // Ensure correct path
 

@@ -3,7 +3,9 @@ import cors from 'cors';
 import path from 'path';
 import userRoutes from '../interfaceAdapters/routes/userRoutes';
 import adminRoutes from '../interfaceAdapters/routes/adminRoutes';
-import hostRoutes from '../interfaceAdapters/routes/hostRoutes';
+import hostRoutes from '../interfaceAdapters/routes/hostRoutes/hostRoutes';
+import categoryRoutes from '../interfaceAdapters/routes/hostRoutes/categoryRoutes';
+
 
 const app = express();
 
@@ -25,5 +27,6 @@ app.use('/uploads', express.static(path.join(__dirname, '../../uploads')));
 app.use('/api/users', userRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/hosts', hostRoutes);
+app.use('/api/categories', categoryRoutes)
 
 export default app;

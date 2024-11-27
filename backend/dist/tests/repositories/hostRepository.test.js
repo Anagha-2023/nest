@@ -5,7 +5,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = __importDefault(require("mongoose"));
 const Host_1 = __importDefault(require("../../entities/Host"));
-const hostRepository_1 = require("../../repositories/hostRepository");
+const hostRepository_1 = require("../../repositories/hostRepository/hostRepository");
 describe('Host Repository', () => {
     beforeAll(async () => {
         await mongoose_1.default.connect('mongodb://localhost:27017/testdb');

@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.editHomestayController = exports.fetchHomestays = exports.addHomestayController = void 0;
-const hostUseCases_1 = require("../../../useCases/hostUseCases");
+const hostUseCases_1 = require("../../../useCases/hostUseCases/hostUseCases");
 const addHomestayController = async (req, res) => {
     try {
         const mulReq = req;

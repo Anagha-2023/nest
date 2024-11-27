@@ -24,7 +24,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const hostAuth_1 = require("../../interfaceAdapters/controllers/hostControllers/hostAuth");
-const hostUseCases = __importStar(require("../../useCases/hostUseCases"));
+const hostUseCases = __importStar(require("../../useCases/hostUseCases/hostUseCases"));
 describe('Host Controller', () => {
     describe('hostLoginController', () => {
         it('should return token if login is successful', async () => {

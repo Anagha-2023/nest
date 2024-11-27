@@ -23,25 +23,24 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+// src/entities/Category.ts
 const mongoose_1 = __importStar(require("mongoose"));
-const HomestaySchema = new mongoose_1.Schema({
-    host: { type: mongoose_1.Schema.Types.ObjectId, ref: "Host", required: true },
-    name: { type: String, required: true },
-    country: { type: String, required: true },
-    category: { type: mongoose_1.Schema.Types.ObjectId, ref: 'Category', required: true },
-    pricePerNight: { type: Number, required: true },
-    image: { type: String, required: true },
-    images: { type: [String], default: [] },
-    rooms: { type: Number, required: true },
-    description: { type: String, required: true },
-    services: [
-        {
-            name: { type: String, required: true },
-            available: { type: Boolean, required: true },
-        },
-    ],
-    cancellationPeriod: { type: Number, required: true },
-    offerPercentage: { type: Number, default: 0 },
-}, { timestamps: true });
-const Homestay = mongoose_1.default.model('Homestay', HomestaySchema);
-exports.default = Homestay;
+const categorySchema = new mongoose_1.Schema({
+    name: {
+        type: String,
+        required: true,
+        unique: true
+    },
+    icon: {
+        type: String,
+        required: true
+    },
+    isActive: {
+        type: Boolean,
+        default: true
+    }
+}, {
+    timestamps: true
+});
+const Category = mongoose_1.default.model('Category', categorySchema);
+exports.default = Category;

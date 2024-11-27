@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 import Host from '../../entities/Host';
-import { findHostByEmail, createHost } from '../../repositories/hostRepository';
+import { findHostByEmail, createHost } from '../../repositories/hostRepository/hostRepository';
 
 // Define a simpler interface for test data (without Mongoose-specific fields)
 interface IHostData {

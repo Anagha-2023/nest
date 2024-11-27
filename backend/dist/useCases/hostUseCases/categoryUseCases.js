@@ -23,25 +23,26 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const mongoose_1 = __importStar(require("mongoose"));
-const HomestaySchema = new mongoose_1.Schema({
-    host: { type: mongoose_1.Schema.Types.ObjectId, ref: "Host", required: true },
-    name: { type: String, required: true },
-    country: { type: String, required: true },
-    category: { type: mongoose_1.Schema.Types.ObjectId, ref: 'Category', required: true },
-    pricePerNight: { type: Number, required: true },
-    image: { type: String, required: true },
-    images: { type: [String], default: [] },
-    rooms: { type: Number, required: true },
-    description: { type: String, required: true },
-    services: [
-        {
-            name: { type: String, required: true },
-            available: { type: Boolean, required: true },
-        },
-    ],
-    cancellationPeriod: { type: Number, required: true },
-    offerPercentage: { type: Number, default: 0 },
-}, { timestamps: true });
-const Homestay = mongoose_1.default.model('Homestay', HomestaySchema);
-exports.default = Homestay;
+exports.deleteCategoryById = exports.updateCategoryById = exports.getCategoryById = exports.getAllCategories = exports.createCategory = void 0;
+// src/useCases/hostUseCases/categoryUseCases.ts
+const categoryRepository = __importStar(require("../../repositories/hostRepository/categoryRepository"));
+const createCategory = async (categoryData) => {
+    return await categoryRepository.createCategory(categoryData);
+};
+exports.createCategory = createCategory;
+const getAllCategories = async () => {
+    return await categoryRepository.findAllCategories();
+};
+exports.getAllCategories = getAllCategories;
+const getCategoryById = async (id) => {
+    return await categoryRepository.findCategoryById(id);
+};
+exports.getCategoryById = getCategoryById;
+const updateCategoryById = async (id, categoryData) => {
+    return await categoryRepository.updateCategory(id, categoryData);
+};
+exports.updateCategoryById = updateCategoryById;
+const deleteCategoryById = async (id) => {
+    await categoryRepository.deleteCategory(id);
+};
+exports.deleteCategoryById = deleteCategoryById;

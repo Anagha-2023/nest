@@ -6,11 +6,11 @@ import {
   verifyOtpController,
   hostLoginController,
   googleHostLoginController,
-} from '../controllers/hostControllers/hostAuth';
-import { addHomestayController, editHomestayController } from '../controllers/hostControllers/addHomestays';
-import { upload } from '../../utils/multer';
-import { fetchHomestays } from '../controllers/hostControllers/addHomestays';
-import { authMiddleware } from '../../middlewares/authMiddleware';
+} from '../../controllers/hostControllers/hostAuth';
+import { addHomestayController, editHomestayController } from '../../controllers/hostControllers/addHomestays';
+import { upload } from '../../../utils/multer';
+import { fetchHomestays } from '../../controllers/hostControllers/addHomestays';
+import { authMiddleware } from '../../../middlewares/authMiddleware';
 
 const router = express.Router();
 

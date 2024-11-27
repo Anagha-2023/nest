@@ -23,25 +23,11 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const mongoose_1 = __importStar(require("mongoose"));
-const HomestaySchema = new mongoose_1.Schema({
-    host: { type: mongoose_1.Schema.Types.ObjectId, ref: "Host", required: true },
-    name: { type: String, required: true },
-    country: { type: String, required: true },
-    category: { type: mongoose_1.Schema.Types.ObjectId, ref: 'Category', required: true },
-    pricePerNight: { type: Number, required: true },
-    image: { type: String, required: true },
-    images: { type: [String], default: [] },
-    rooms: { type: Number, required: true },
-    description: { type: String, required: true },
-    services: [
-        {
-            name: { type: String, required: true },
-            available: { type: Boolean, required: true },
-        },
-    ],
-    cancellationPeriod: { type: Number, required: true },
-    offerPercentage: { type: Number, default: 0 },
-}, { timestamps: true });
-const Homestay = mongoose_1.default.model('Homestay', HomestaySchema);
-exports.default = Homestay;
+const express_1 = require("express");
+const categoryController = __importStar(require("../../controllers/hostControllers/categoryController"));
+const router = (0, express_1.Router)();
+router.post('/addCategory', categoryController.createCategory);
+router.get('/fetchAllCategory', categoryController.getAllCategories);
+router.put('/updateCategory/:id', categoryController.updateCategory);
+router.delete('/deleteCategory/:id', categoryController.deleteCategory);
+exports.default = router;

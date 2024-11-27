@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { registerHostController, hostLoginController } from '../../interfaceAdapters/controllers/hostControllers/hostAuth';
-import * as hostUseCases from '../../useCases/hostUseCases';
+import * as hostUseCases from '../../useCases/hostUseCases/hostUseCases';
 
 describe('Host Controller', () => {
   describe('hostLoginController', () => {

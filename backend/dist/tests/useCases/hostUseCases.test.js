@@ -28,9 +28,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const bcryptjs_1 = __importDefault(require("bcryptjs"));
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
-const hostUseCases_1 = require("../../useCases/hostUseCases");
-const hostRepository = __importStar(require("../../repositories/hostRepository"));
-const hostUseCases_2 = require("../../useCases/hostUseCases");
+const hostUseCases_1 = require("../../useCases/hostUseCases/hostUseCases");
+const hostRepository = __importStar(require("../../repositories/hostRepository/hostRepository"));
+const hostUseCases_2 = require("../../useCases/hostUseCases/hostUseCases");
 const otpService_1 = require("../../services/otpService");
 // Mocking dependencies
 jest.mock('../../repositories/hostRepository');

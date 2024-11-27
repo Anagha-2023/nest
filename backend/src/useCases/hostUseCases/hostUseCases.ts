@@ -1,13 +1,13 @@
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
-import { JWT_SECRET } from '../config/serverconfig';
-import { findHostByEmail, createHost, editHomestay } from '../repositories/hostRepository';
-import { otpService } from '../services/otpService';
-import Otp from '../entities/Otp';
-import Host from '../entities/Host';
-import { addHomestay } from '../repositories/hostRepository';
-import { IHomestay } from '../entities/Homestay';
-import { findHomestaysByHost } from '../repositories/hostRepository';
+import { JWT_SECRET } from '../../config/serverconfig';
+import { findHostByEmail, createHost, editHomestay } from '../../repositories/hostRepository/hostRepository';
+import { otpService } from '../../services/otpService';
+import Otp from '../../entities/Otp';
+import Host from '../../entities/Host';
+import { addHomestay } from '../../repositories/hostRepository/hostRepository';
+import { IHomestay } from '../../entities/Homestay';
+import { findHomestaysByHost } from '../../repositories/hostRepository/hostRepository';
 
 // Use case to register host with OTP validation
 export const loginHostUseCase = async (email: string, password: string): Promise<string | null> => {

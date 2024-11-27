@@ -1,5 +1,5 @@
-import Host, { IHost } from '../entities/Host';
-import Homestay, { IHomestay } from '../entities/Homestay';
+import Host, { IHost } from '../../entities/Host';
+import Homestay, { IHomestay } from '../../entities/Homestay';
 
 // Type for creating a host (excluding unnecessary fields)
 type CreateHostInput = Omit<IHost, '_id' | 'createdAt' | 'updatedAt' | '$$populatedPaths'>;

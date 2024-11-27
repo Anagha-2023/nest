@@ -8,6 +8,7 @@ import { generateOtp } from '../../../utils/otpGenerator';
 import {ForgotPassword, ResetPassword} from '../../../useCases/userUseCases'
 import { JwtPayload } from 'jsonwebtoken';
 import Homestay from '../../../entities/Homestay';
+import Category, { ICategoryDocument } from '../../../entities/Category';
 
 // User registration
 export const registerUser = async (req: Request, res: Response) => {
@@ -368,8 +369,36 @@ export const userLogout = (req:Request, res:Response) => {
 
 export const homestayListing = async (req: Request, res: Response) => {
   try {
-    const homestays = await Homestay.find().populate('host', 'name'); // Populate host name
-    return res.status(200).json(homestays);
+    const { category } = req.query;
+    
+    console.log("Backend received Category -", category);
+
+    const filter: any = {};
+    if (category && category !== 'All') {
+      // Find the category by name first
+      const categoryDoc = await Category.findOne({ name: category });
+      if (categoryDoc) {
+        filter.category = categoryDoc._id;
+      }
+    }
+
+    const homestays = await Homestay.find(filter)
+      .populate('host', 'name')
+      .populate({
+        path: 'category',
+        select: 'name'
+      });
+
+    // Type-safe way to access category name
+    const homestaysWithCategoryNames = homestays.map(homestay => ({
+      ...homestay.toObject(),
+      categoryName: (homestay.category as ICategoryDocument)?.name
+    }));
+
+    console.log('All Homestays -', homestaysWithCategoryNames);
+    console.log('Homestay-Categories:', homestaysWithCategoryNames.map(h => h.categoryName));
+
+    return res.status(200).json(homestaysWithCategoryNames);
   } catch (error) {
     console.error('Error fetching homestays:', error);
     return res.status(500).json({ message: 'Internal Server Error' });
