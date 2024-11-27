@@ -1,23 +1,22 @@
-// src/components/AdminDashboard.tsx
 import React, { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
-import { useNavigate } from "react-router-dom"; // Import useNavigate for redirection
-import { logout } from "../../store/slices/adminSlice"; // Adjust the import path based on your structure
-import UserManagement from "./UserManagement"; // Import the UserManagement component
+import { useNavigate } from "react-router-dom";
+import { logout } from "../../store/slices/adminSlice";
+import UserManagement from "./UserManagement";
 import HostManagement from "./HostManagement";
-import { AiOutlineLogout } from 'react-icons/ai'; // Import the logout icon
-
+import CategoryManagement from "../host/CategoryManagement";
+import { AiOutlineLogout } from "react-icons/ai";
 
 const AdminDashboard: React.FC = () => {
-  const [activeSection, setActiveSection] = useState("dashboard");
+  const [activeSection, setActiveSection] = useState<"dashboard" | "userManagement" | "hostManagement" | "categories">("dashboard");
   const [loading, setLoading] = useState(true);
   const dispatch = useDispatch();
-  const navigate = useNavigate(); // Initialize useNavigate
+  const navigate = useNavigate();
 
   useEffect(() => {
     const timer = setTimeout(() => {
       setLoading(false);
-    }, 1000); // Simulate a delay (you can replace this with actual API calls)
+    }, 1000);
     return () => clearTimeout(timer);
   }, []);
 
@@ -33,11 +32,13 @@ const AdminDashboard: React.FC = () => {
 
     switch (activeSection) {
       case "dashboard":
-        return <h2 className="flex justify-center text-3xl font-semibold text-gray-700">Welcome to the Dashboard!</h2>;
+        return <h2 className="flex justify-center text-3xl font-semibold text-gray-700">Welcome to the Admin Dashboard!</h2>;
       case "userManagement":
-        return <UserManagement />; // Use the separated UserManagement component
+        return <UserManagement />;
       case "hostManagement":
         return <HostManagement />;
+      case "categories":
+        return <CategoryManagement />;
       default:
         return null;
     }
@@ -51,6 +52,8 @@ const AdminDashboard: React.FC = () => {
         return "User Management";
       case "hostManagement":
         return "Host Management";
+      case "categories":
+        return "Category Management";
       default:
         return "Admin Dashboard";
     }
@@ -58,10 +61,10 @@ const AdminDashboard: React.FC = () => {
 
   // Handle logout functionality
   const handleLogout = async () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('role');
-    await dispatch(logout() as any); // Dispatch the logout action
-    navigate("/admin-login"); // Redirect to the admin login page
+    localStorage.removeItem("token");
+    localStorage.removeItem("role");
+    await dispatch(logout() as any);
+    navigate("/admin-login");
   };
 
   return (
@@ -70,67 +73,59 @@ const AdminDashboard: React.FC = () => {
       <div className="w-1/6 bg-blue-200 p-4">
         {/* Logo */}
         <div className="mb-8">
-          <img
-            src="../src/assets/images/logo_black.png"
-            alt="Logo"
-            className="absolute top-5 left-5 w-20"
-          />
+          <img src="../src/assets/images/logo_black.png" alt="Logo" className="absolute top-5 left-5 w-20" />
         </div>
 
         {/* Sidebar Menu */}
         <nav className="mt-20">
           <ul className="space-y-8">
             <li>
-              <a
-                href="#"
-                className={`block text-gray-700 font-semibold p-2 rounded transition-transform duration-500 transform ${activeSection === "dashboard"
-                  ? "scale-105 bg-blue-300"
-                  : "hover:bg-blue-100 hover:scale-105 active:bg-blue-100 active:scale-105"
-                  }`}
+              <button
+                className={`block text-gray-700 font-semibold p-2 ${activeSection === "dashboard" ? "bg-blue-300" : ""}`}
                 onClick={() => setActiveSection("dashboard")}
               >
                 Dashboard
-              </a>
+              </button>
             </li>
             <li>
-              <a
-                href="#"
-                className={`block text-gray-700 font-semibold p-2 rounded transition-transform duration-500 transform ${activeSection === "userManagement"
-                  ? "scale-105 bg-blue-300"
-                  : "hover:bg-blue-100 hover:scale-105 active:bg-blue-100 active:scale-105"
-                  }`}
+              <button
+                className={`block text-gray-700 font-semibold p-2 ${activeSection === "userManagement" ? "bg-blue-300" : ""}`}
                 onClick={() => setActiveSection("userManagement")}
               >
                 User Management
-              </a>
+              </button>
             </li>
             <li>
-              <a
-                href="#"
-                className={`block text-gray-700 font-semibold p-2 rounded transition-transform duration-500 transform ${activeSection === "hostManagement"
-                  ? "scale-105 bg-blue-300"
-                  : "hover:bg-blue-100 hover:scale-105 active:bg-blue-100 active:scale-105"
-                  }`}
+              <button
+                className={`block text-gray-700 font-semibold p-2 ${activeSection === "hostManagement" ? "bg-blue-300" : ""}`}
                 onClick={() => setActiveSection("hostManagement")}
               >
                 Host Management
-              </a>
+              </button>
+            </li>
+            <li>
+              <button
+                className={`block text-gray-700 font-semibold p-2 ${activeSection === "categories" ? "bg-blue-300" : ""}`}
+                onClick={() => setActiveSection("categories")}
+              >
+                Category Management
+              </button>
             </li>
           </ul>
         </nav>
       </div>
 
       {/* Main Content */}
-      <div className="flex-grow p-8 transition-all duration-300 ease-in-out relative">
+      <div className="flex-grow p-8 relative">
         <button
           onClick={handleLogout}
-          className="absolute top-5 right-5 bg-blue-400 text-white px-4 py-1 rounded transition hover:bg-blue-600 flex items-center" // Add flex to align items
+          className="absolute top-5 right-5 bg-blue-400 text-white px-4 py-1 rounded flex items-center hover:bg-blue-600"
         >
-          <AiOutlineLogout className="mr-2 text-black" /> {/* Add the icon with margin to the right */}
+          <AiOutlineLogout className="mr-2" />
           Logout
         </button>
         <h1 className="text-2xl font-bold">{renderHeading()}</h1>
-        <div className="mt-5 animate-fade-in">{renderContent()}</div>
+        <div className="mt-5">{renderContent()}</div>
       </div>
     </div>
   );

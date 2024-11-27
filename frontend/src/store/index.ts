@@ -3,6 +3,7 @@ import { userReducer } from './slices/userSlice';
 import { adminReducer } from './slices/adminSlice';
 import { hostReducer } from './slices/hostSlice'
 import { homestayReducer } from './slices/hosthomestaySlice';
+import  categoryReducer  from './slices/categorySlice'
 
 const store = configureStore({
   reducer: {
@@ -10,6 +11,7 @@ const store = configureStore({
     admin: adminReducer,
     host: hostReducer,
     homestay: homestayReducer,
+    categories: categoryReducer
   },
   devTools: process.env.NODE_ENV !== 'production',
 });

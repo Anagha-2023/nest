@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { addHomestay, resetSuccess } from '../store/slices/hosthomestaySlice';
-import { RootState, AppDispatch } from '../store/index';
+import { fetchCategories } from '../store/slices/categorySlice';
+import { RootState } from '../store/index';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTimes, faCrop } from '@fortawesome/free-solid-svg-icons';
 import ImageCropper from '../components/ImageCropper';
@@ -27,6 +28,7 @@ const AddHomestayForm: React.FC = () => {
     cancellationPeriod: 0,
     offerPercentage: 0,
     services: initialServices,
+    category: ''
   });
 
   const [image, setImage] = useState<File | null>(null);
@@ -51,6 +53,11 @@ const AddHomestayForm: React.FC = () => {
   });
 
   const { status, error, success } = useSelector((state: RootState) => state.homestay);
+  const { categories } = useSelector((state: RootState) => state.categories)
+
+  useEffect(() => {
+    dispatch(fetchCategories() as any)
+  }, [dispatch])
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -159,7 +166,7 @@ const AddHomestayForm: React.FC = () => {
     if (formData.description.length < 10) newErrors.description = 'Description must be at least 10 characters';
     if (formData.cancellationPeriod < 0) newErrors.cancellationPeriod = 'Cancellation Period cannot be negative';
     if (formData.offerPercentage < 0) newErrors.offerPercentage = 'Offer Percentage cannot be negative';
-
+    if (!formData.category) newErrors.categories = 'Category is required'
     if (!image) newErrors.image = 'Main image is required';
     if (images.length === 0) newErrors.additionalImages = 'At least one additional image is required';
 
@@ -206,6 +213,7 @@ const AddHomestayForm: React.FC = () => {
         cancellationPeriod: 0,
         offerPercentage: 0,
         services: [{ name: 'WiFi', available: false }],
+        category:''
       });
       setImage(null);
       setImages([]);
@@ -366,6 +374,23 @@ const AddHomestayForm: React.FC = () => {
             >
               Add Service
             </button>
+
+            <label className="block mb-1 mt-4">Category</label>
+            {errors.category && <p className="text-red-500">{errors.category}</p>}
+            <select
+              name="category"
+              value={formData.category}
+              onChange={handleInputChange}
+              className="input-field p-4 w-full border border-gray-300 rounded-md"
+            >
+              <option value="">Select Category</option>
+              {categories.map((category) => (
+                <option key={category._id} value={category._id}>
+                  {category.name}
+                </option>
+              ))}
+            </select>
+            
   
             {/* Main Image Upload Section */}
             <label className="block mb-1 mt-4">Main Image</label>
